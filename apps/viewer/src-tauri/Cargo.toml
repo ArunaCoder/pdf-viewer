@@ -1,0 +1,43 @@
+[package]
+name = "pdf-viewer"
+description = "Visualizador de PDF com leitura dos anexos"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[lib]
+# `main.rs` invoca `viewer_lib::run()`; o nome da lib é independente do nome do pacote.
+name = "viewer_lib"
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { workspace = true }
+
+[dependencies]
+# O núcleo que lê e extrai os anexos — sem Tauri e sem disco, testado à parte.
+pdf-attachments = { path = "../../../crates/pdf-attachments" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+thiserror = { workspace = true }
+tauri = { workspace = true }
+tauri-plugin-log = { workspace = true }
+# Os seletores nativos de abrir e salvar, chamados **só pelo Rust**: a capability do
+# webview não concede permissão deste plugin, então nenhum caminho de arquivo nasce no
+# webview — ele recebe documento e anexo por id.
+tauri-plugin-dialog = { workspace = true }
+# Abrir o anexo e o link externo com o programa padrão do sistema, também só pelo Rust,
+# depois da régua de executáveis (`pdf_attachments::kind::is_executable`) e da de esquema.
+tauri-plugin-opener = { workspace = true }
+# Um processo por vez: abrir um PDF com o app já aberto (duplo clique, "Abrir com") entrega
+# o arquivo à janela existente, numa aba nova, em vez de abrir uma segunda janela.
+tauri-plugin-single-instance = { workspace = true }
+
+[dev-dependencies]
+# Monta os PDFs de teste dos comandos de anexo.
+lopdf = { workspace = true }
+strum = { workspace = true }
+tempfile = { workspace = true }
+
+[lints]
+workspace = true

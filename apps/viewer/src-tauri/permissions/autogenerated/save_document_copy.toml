@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-save-document-copy"
+description = "Enables the save_document_copy command without any pre-configured scope."
+commands.allow = ["save_document_copy"]
+
+[[permission]]
+identifier = "deny-save-document-copy"
+description = "Denies the save_document_copy command without any pre-configured scope."
+commands.deny = ["save_document_copy"]

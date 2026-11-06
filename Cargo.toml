@@ -1,0 +1,99 @@
+[workspace]
+members = ["crates/pdf-attachments", "apps/viewer/src-tauri"]
+# Explícito porque manifesto virtual (sem `[package]`) não herda o resolver default da
+# edition — sem esta linha o workspace cairia no resolver v1.
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+# Sem `authors`: o Tauri grava os campos de pacote no executável, e nome e e-mail iriam
+# junto em todo instalador distribuído.
+publish = false
+
+# ── Dependências comuns ─────────────────────────────────────────────────────
+# Fonte única de versão das crates que mais de um membro usa: cada membro herda com
+# `nome = { workspace = true }`, e os dois não divergem na primeira atualização.
+[workspace.dependencies]
+# Leitura do grafo de objetos do PDF (catálogo, árvore de nomes, anotações, streams) e a
+# decifragem dos PDFs protegidos por senha. Pura Rust: esta estação compila o alvo MSVC
+# via xwin, que fornece libs e headers mas **não** um compilador C, então as alternativas
+# que envolvem C (MuPDF, PDFium) não compilariam aqui. Sem as features padrão: `rayon`
+# (carga paralela) e `chrono-clock` (datas) não têm consumidor — as datas do anexo são
+# lidas por `pdf_attachments::date`, que não precisa do relógio.
+lopdf = { version = "0.46.0", default-features = false }
+# MD5 do `/Params /CheckSum` do anexo (PDF 32000-1 §7.11.4.2), conferido na extração. A
+# linha é a que o próprio `lopdf` já compila para a decifragem RC4/AES, então declará-la
+# não acrescenta crate à árvore.
+md-5 = "0.11.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+# Derive de `Display`/`Error`/`From` dos tipos de erro. Já compilado como dependência do
+# `tauri` e do `lopdf`, então não acrescenta crate, só troca boilerplate por derive.
+thiserror = "2.0.21"
+log = "0.4.34"
+# Linha 2 do Tauri, a estável — a 3 está em alpha. As versões são as que o workspace irmão
+# (tudolindo) já compila nesta estação, com o mesmo arranjo de toolchain.
+tauri = { version = "2.11.5", features = [] }
+tauri-build = { version = "2.6.3", features = [] }
+tauri-plugin-log = "2.9.1"
+tauri-plugin-dialog = "2.7.3"
+tauri-plugin-opener = "2.5.5"
+tauri-plugin-single-instance = "2.4.4"
+# Iterar as variantes do enum de código de erro IPC no teste que **gera** o union do
+# webview: o iterador sai do que o compilador vê, e variante nova entra nele sozinha. Só
+# `[dev-dependencies]`: nenhum binário embarcado a linka.
+strum = { version = "0.28.0", features = ["derive"] }
+# Diretório temporário que se apaga sozinho, só em teste.
+tempfile = "3.27.0"
+
+# ── Gates de qualidade ──────────────────────────────────────────────────────
+# Fonte única dos denies: cada membro herda com `[lints] workspace = true`.
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"
+
+[workspace.lints.rustdoc]
+broken_intra_doc_links = "deny"
+private_intra_doc_links = "deny"
+redundant_explicit_links = "deny"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+# Duplicatas de versão no grafo do Tauri (windows_*, thiserror 1/2…) são inevitáveis. A
+# vigilância de duplicatas é do `cargo deny` (`deny.toml`, `multiple-versions = "warn"`),
+# fonte única; aqui o lint fica desligado para não manter duas allowlists em sincronia.
+multiple_crate_versions = "allow"
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+# `unreachable!()` é `panic!` por outro nome.
+unreachable = "deny"
+todo = "deny"
+unimplemented = "deny"
+dbg_macro = "deny"
+# Indexação que pode panicar (`v[i]`, `s[a..b]`) num leitor de arquivo hostil: todo
+# acesso passa por `get`, e o tamanho errado vira erro tipado, nunca aborto.
+indexing_slicing = "deny"
+# `as` entre inteiros trunca ou troca o sinal em silêncio; a conversão é `try_from`.
+as_conversions = "deny"
+# A saída do app é o log (`tauri-plugin-log`); `println!` é resto de depuração. O `stderr`
+# fica livre para a linha de falha fatal, que chega ao console onde o logger não chega.
+print_stdout = "deny"
+
+[profile.dev]
+# Arquivo e linha no backtrace, sem o debuginfo completo que domina o tamanho de
+# `target/`. Para inspecionar variável num depurador: `--config profile.dev.debug=2`.
+debug = "line-tables-only"
+
+[profile.dev.build-override]
+debug = 0
+
+# O `lopdf` decifra e descomprime byte a byte; sem otimização, abrir um PDF de centenas de
+# páginas no build de desenvolvimento leva segundos. Otimizar só as dependências mantém o
+# código do workspace depurável e o tempo de abertura próximo ao do release.
+[profile.dev.package."*"]
+opt-level = 2

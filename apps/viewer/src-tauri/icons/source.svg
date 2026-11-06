@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2A0E5C"/>
+      <stop offset="0.55" stop-color="#5B21B6"/>
+      <stop offset="1" stop-color="#C026D3"/>
+    </linearGradient>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EDE4FF"/>
+    </linearGradient>
+    <linearGradient id="clip" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F0ABFC"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <clipPath id="tile"><rect x="48" y="48" width="928" height="928" rx="220"/></clipPath>
+  </defs>
+  <rect x="48" y="48" width="928" height="928" rx="220" fill="url(#bg)"/>
+  <circle cx="820" cy="210" r="260" fill="#E879F9" opacity="0.18" clip-path="url(#tile)"/>
+  <path d="M300 230 h300 l150 150 v420 a40 40 0 0 1 -40 40 h-410 a40 40 0 0 1 -40 -40 v-530 a40 40 0 0 1 40 -40 z" fill="url(#page)"/>
+  <path d="M600 230 v110 a40 40 0 0 0 40 40 h110 z" fill="#C4B5FD"/>
+  <rect x="330" y="470" width="250" height="34" rx="17" fill="#7C3AED" opacity="0.85"/>
+  <rect x="330" y="540" width="330" height="34" rx="17" fill="#7C3AED" opacity="0.45"/>
+  <rect x="330" y="610" width="290" height="34" rx="17" fill="#7C3AED" opacity="0.45"/>
+  <path d="M640 520 v230 a85 85 0 0 1 -170 0 v-250 a55 55 0 0 1 110 0 v230 a25 25 0 0 1 -50 0 v-200"
+        fill="none" stroke="url(#clip)" stroke-width="34" stroke-linecap="round" transform="translate(70 40) rotate(18 560 640)"/>
+</svg>

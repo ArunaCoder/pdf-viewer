@@ -1,0 +1,27 @@
+{
+  "name": "pdf-viewer-tooling",
+  "private": true,
+  "type": "module",
+  "description": "Ferramental do repositório: Biome, gates de Rust e o portão único da entrega",
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "ts:type": "npm --prefix apps/viewer run typecheck",
+    "ts:test": "npm --prefix apps/viewer test",
+    "ts:check": "npm run lint && npm run ts:type",
+    "rs:lint": "cargo clippy --workspace --all-targets -- -D warnings",
+    "rs:fmt": "cargo fmt --all --check",
+    "rs:doc": "cargo doc --workspace --no-deps --document-private-items",
+    "rs:test": "cargo test --workspace",
+    "rs:check": "npm run rs:lint && npm run rs:fmt && npm run rs:doc",
+    "deny": "cargo deny check",
+    "audit": "npm audit --audit-level=high && npm --prefix apps/viewer audit --audit-level=high",
+    "build:web": "npm --prefix apps/viewer run build",
+    "gate": "npm run ts:check && npm run rs:check && npm run rs:test && npm run ts:test && npm run build:web && npm run deny && npm run audit",
+    "app": "npm --prefix apps/viewer run tauri -- dev",
+    "app:build": "npm --prefix apps/viewer run tauri -- build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.2"
+  }
+}

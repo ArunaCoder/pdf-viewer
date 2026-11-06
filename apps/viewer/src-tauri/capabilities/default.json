@@ -1,0 +1,30 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "the main window: core defaults, the window title and fullscreen it toggles, writing its warnings to the log file, and the app commands; dialogs, file writes and external opens happen on the Rust side and are not granted here",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-set-title",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-is-fullscreen",
+    "log:allow-log",
+    "allow-pick-documents",
+    "allow-take-pending-documents",
+    "allow-recent-documents",
+    "allow-open-recent",
+    "allow-clear-recent",
+    "allow-document-bytes",
+    "allow-close-document",
+    "allow-save-document-copy",
+    "allow-show-in-folder",
+    "allow-open-external-link",
+    "allow-list-attachments",
+    "allow-attachment-bytes",
+    "allow-verify-attachment",
+    "allow-open-attachment-as-document",
+    "allow-save-attachment",
+    "allow-save-all-attachments",
+    "allow-open-attachment-externally"
+  ]
+}

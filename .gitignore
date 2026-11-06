@@ -1,0 +1,25 @@
+# --- Rust ---
+# O build do workspace vai para `target/` na raiz.
+target/
+
+# Config LOCAL da estação de cross-compile (xwin + rust-lld para o alvo MSVC): caminhos
+# absolutos desta máquina, que não valem em outra.
+/.cargo/config.toml
+
+# --- Node / webview ---
+node_modules/
+apps/viewer/dist/
+# Recursos do pdf.js copiados pelo `vite.config.ts` a cada build: derivados do pacote.
+apps/viewer/public/pdfjs/
+
+# --- Tauri ---
+# Esquemas gerados pelo `tauri-build` a cada compilação.
+apps/viewer/src-tauri/gen/
+
+# --- Sistema e editor ---
+.DS_Store
+Thumbs.db
+*.log
+.vscode/*
+!.vscode/extensions.json
+reports/

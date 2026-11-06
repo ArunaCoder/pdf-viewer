@@ -1,0 +1,162 @@
+/*
+ * Design system "Violeta" — os tokens. Todo valor de cor, raio, sombra e movimento do app
+ * sai daqui; os componentes (app.css) só os consomem.
+ *
+ * O escuro é o tema de origem: o documento é a única superfície clara da tela, e o roxo
+ * profundo em volta dele o põe em evidência sem competir com ele. O claro troca as
+ * superfícies e mantém a mesma família de acento.
+ */
+
+:root {
+  /* ── Tipografia ─────────────────────────────────────────────────────────── */
+  --font-ui: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Code", "Cascadia Mono", Consolas, ui-monospace, monospace;
+
+  --text-xs: 11px;
+  --text-sm: 12.5px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 28px;
+  --text-hero: clamp(40px, 6vw, 76px);
+
+  /* ── Forma ──────────────────────────────────────────────────────────────── */
+  --radius-xs: 6px;
+  --radius-sm: 9px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --radius-pill: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --topbar-h: 46px;
+  --toolbar-h: 52px;
+  --sidebar-w: 232px;
+  --drawer-w: 360px;
+
+  /* ── Movimento ──────────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 120ms;
+  --dur-med: 200ms;
+  --dur-slow: 360ms;
+
+  /* ── Acento: a família violeta, igual nos dois temas ────────────────────── */
+  --violet-300: #c4b5fd;
+  --violet-400: #a78bfa;
+  --violet-500: #8b5cf6;
+  --violet-600: #7c3aed;
+  --violet-700: #6d28d9;
+  --purple-500: #a855f7;
+  --fuchsia-400: #e879f9;
+  --fuchsia-500: #d946ef;
+
+  --gradient-brand: linear-gradient(135deg, #6d28d9 0%, #a855f7 52%, #d946ef 100%);
+  --gradient-brand-soft: linear-gradient(135deg, rgb(124 58 237 / 0.22), rgb(217 70 239 / 0.14));
+  --gradient-text: linear-gradient(100deg, #c4b5fd 0%, #e879f9 55%, #f0abfc 100%);
+
+  --danger: #fb7185;
+  --warning: #fbbf24;
+  --success: #34d399;
+}
+
+/* ── Tema escuro (origem) ─────────────────────────────────────────────────── */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-deep: #08050f;
+  --bg: #0d0817;
+  --surface-1: #140d22;
+  --surface-2: #1b122d;
+  --surface-3: #251a3b;
+  --surface-hover: rgb(167 139 250 / 0.09);
+  --surface-active: rgb(167 139 250 / 0.16);
+  --surface-glass: rgb(20 13 34 / 0.72);
+
+  --border: rgb(196 181 253 / 0.1);
+  --border-strong: rgb(196 181 253 / 0.22);
+
+  --text-1: #f5f0ff;
+  --text-2: #c9bde3;
+  --text-3: #8f81ab;
+  --text-on-accent: #ffffff;
+
+  --accent: var(--violet-500);
+  --accent-strong: var(--violet-600);
+  --accent-text: var(--violet-300);
+  --accent-soft: rgb(139 92 246 / 0.16);
+  --accent-ring: rgb(168 85 247 / 0.55);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 8px 24px -8px rgb(0 0 0 / 0.6);
+  --shadow-lg: 0 24px 64px -16px rgb(0 0 0 / 0.75), 0 0 0 1px var(--border);
+  --shadow-page: 0 18px 50px -18px rgb(0 0 0 / 0.85), 0 0 0 1px rgb(0 0 0 / 0.35);
+  --glow: 0 0 0 1px rgb(168 85 247 / 0.45), 0 10px 34px -10px rgb(168 85 247 / 0.7);
+
+  --canvas-bg:
+    radial-gradient(1200px 600px at 85% -10%, rgb(124 58 237 / 0.16), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgb(217 70 239 / 0.1), transparent 60%),
+    var(--bg-deep);
+
+  --scrollbar: rgb(196 181 253 / 0.18);
+  --scrollbar-hover: rgb(196 181 253 / 0.32);
+}
+
+/* ── Tema claro ───────────────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-deep: #ece6f7;
+  --bg: #f6f2fc;
+  --surface-1: #ffffff;
+  --surface-2: #faf7ff;
+  --surface-3: #f1ebfb;
+  --surface-hover: rgb(124 58 237 / 0.07);
+  --surface-active: rgb(124 58 237 / 0.13);
+  --surface-glass: rgb(255 255 255 / 0.78);
+
+  --border: rgb(76 29 149 / 0.1);
+  --border-strong: rgb(76 29 149 / 0.2);
+
+  --text-1: #1c1230;
+  --text-2: #4d3f68;
+  --text-3: #7f719a;
+  --text-on-accent: #ffffff;
+
+  --accent: var(--violet-600);
+  --accent-strong: var(--violet-700);
+  --accent-text: var(--violet-700);
+  --accent-soft: rgb(124 58 237 / 0.1);
+  --accent-ring: rgb(124 58 237 / 0.45);
+
+  --shadow-sm: 0 1px 2px rgb(28 18 48 / 0.08);
+  --shadow-md: 0 8px 24px -10px rgb(28 18 48 / 0.18);
+  --shadow-lg: 0 24px 64px -18px rgb(28 18 48 / 0.28), 0 0 0 1px var(--border);
+  --shadow-page: 0 14px 40px -16px rgb(28 18 48 / 0.35), 0 0 0 1px rgb(28 18 48 / 0.06);
+  --glow: 0 0 0 1px rgb(124 58 237 / 0.35), 0 10px 30px -12px rgb(124 58 237 / 0.5);
+
+  --canvas-bg:
+    radial-gradient(1200px 600px at 85% -10%, rgb(168 85 247 / 0.14), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgb(217 70 239 / 0.08), transparent 60%),
+    var(--bg-deep);
+
+  --scrollbar: rgb(76 29 149 / 0.18);
+  --scrollbar-hover: rgb(76 29 149 / 0.32);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-med: 0ms;
+    --dur-slow: 0ms;
+  }
+}

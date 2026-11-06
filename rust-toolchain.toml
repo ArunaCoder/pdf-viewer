@@ -1,0 +1,9 @@
+[toolchain]
+# Versão exata do toolchain, sem triple de host: o arquivo alcança máquinas com arranjos
+# de host diferentes (a estação sem Visual Studio compila o alvo MSVC a partir de um host
+# GNU), e soletrar o host aqui acertaria uma e quebraria as outras.
+channel = "1.97.1"
+components = ["clippy", "rustfmt"]
+# Alvo de que a estação de cross-compile depende, no arquivo em vez de num
+# `rustup target add` manual que só aquela máquina lembra de rodar.
+targets = ["x86_64-pc-windows-msvc"]

@@ -1,0 +1,52 @@
+# Supply chain do workspace (`npm run deny`, parte do `npm run gate`).
+
+[graph]
+# App só para Windows: escopar os triples poda da visão do cargo-deny as subárvores
+# exclusivas de outros SOs. Trade-off: advisories e licenças de crates só-Linux/macOS
+# deixam de ser checados — reabrir se outro SO entrar no escopo.
+targets = ["x86_64-pc-windows-msvc", "aarch64-pc-windows-msvc"]
+all-features = false
+no-default-features = false
+
+[output]
+feature-depth = 1
+
+[advisories]
+unmaintained = "workspace"
+# No `warn` default, o comando imprime o aviso e ainda sai 0: o portão fecharia verde no
+# caso que o eixo existe para pegar — o yank é o remédio padrão de um publish comprometido.
+yanked = "deny"
+ignore = []
+
+[licenses]
+# Só as licenças que a árvore de fato usa: o cargo-deny avisa da que sobra, e uma lista
+# maior que a árvore aceitaria em silêncio a crate nova de licença que ninguém pesou.
+allow = [
+  "MIT",
+  "MIT-0",
+  "Apache-2.0",
+  "BSD-3-Clause",
+  "0BSD",
+  "CC0-1.0",
+  "Unlicense",
+  "Zlib",
+  "Unicode-3.0",
+  "MPL-2.0",
+]
+confidence-threshold = 0.8
+
+[licenses.private]
+ignore = true
+
+[bans]
+# Duplicata é ruído de árvore no ecossistema Tauri, não sinal de comprometimento.
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+highlight = "all"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

@@ -1,0 +1,10 @@
+# ── Limiares de complexidade ────────────────────────────────────────────────
+# Os mesmos do workspace irmão (tudolindo). Estes valores são a fonte da verdade; nenhum
+# doc os transcreve, de propósito.
+too-many-arguments-threshold = 5
+too-many-lines-threshold = 100
+cognitive-complexity-threshold = 10
+
+# Os testes podem indexar fixture que eles mesmos montaram; o `indexing_slicing` do
+# workspace existe para o leitor de arquivo hostil, não para o literal do teste.
+allow-indexing-slicing-in-tests = true

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-verify-attachment"
+description = "Enables the verify_attachment command without any pre-configured scope."
+commands.allow = ["verify_attachment"]
+
+[[permission]]
+identifier = "deny-verify-attachment"
+description = "Denies the verify_attachment command without any pre-configured scope."
+commands.deny = ["verify_attachment"]
