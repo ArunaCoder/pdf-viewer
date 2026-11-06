@@ -53,6 +53,7 @@ const KIND_LABELS: Record<Attachment["kind"], string> = {
   pdf: "PDF",
   image: "Imagem",
   text: "Texto",
+  document: "Documento",
   other: "Arquivo",
 };
 

@@ -16,6 +16,12 @@ tauri-build = { workspace = true }
 [dependencies]
 # O núcleo que lê e extrai os anexos — sem Tauri e sem disco, testado à parte.
 pdf-attachments = { path = "../../../crates/pdf-attachments" }
+# A prévia de leitura dos anexos `.docx` e `.odt` — o mesmo arranjo: bytes entram, blocos
+# com tipo saem, e o webview só os desenha.
+office-preview = { path = "../../../crates/office-preview" }
+# As imagens da prévia de documento vão ao webview como `data:` (o CSP já permite em
+# `img-src`). A linha 0.22 já é compilada pelo Tauri, então não acrescenta crate à árvore.
+base64 = "0.22.1"
 serde = { workspace = true }
 serde_json = { workspace = true }
 log = { workspace = true }

@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/pdf-attachments", "apps/viewer/src-tauri"]
+members = ["crates/pdf-attachments", "crates/office-preview", "apps/viewer/src-tauri"]
 # Explícito porque manifesto virtual (sem `[package]`) não herda o resolver default da
 # edition — sem esta linha o workspace cairia no resolver v1.
 resolver = "3"

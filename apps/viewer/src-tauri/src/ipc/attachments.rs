@@ -11,7 +11,8 @@ use tauri::{AppHandle, Runtime};
 use tauri_plugin_opener::OpenerExt as _;
 
 use super::dto::{
-    AttachmentDto, AttachmentListing, DocumentInfo, IntegrityDto, OpenFailure, SavedBatch, SavedFile, UnreadableDto,
+    AttachmentDto, AttachmentListing, DocumentInfo, DocumentPreviewDto, IntegrityDto, OpenFailure, SavedBatch,
+    SavedFile, UnreadableDto,
 };
 use super::{blocking, file_dialog, state_of};
 use crate::documents::{DocumentId, MAX_DOCUMENT_BYTES, OpenDocument};
@@ -54,6 +55,29 @@ pub async fn attachment_bytes<R: Runtime>(
         let document = state_of(&app).documents.get(document_id)?;
         let (_, extracted) = extract(&document, attachment_id, MAX_PREVIEW_BYTES)?;
         Ok(Response::new(extracted.bytes))
+    })
+    .await
+}
+
+/// A prévia de leitura do anexo `.docx` ou `.odt`.
+///
+/// O formato é decidido pelo conteúdo, no núcleo (`office_preview`), e não pelo tipo que o
+/// painel mostra: o anexo de nome `.docx` que não é um documento do Word é recusado aqui,
+/// e o webview recebe só blocos com tipo, nunca o arquivo nem HTML.
+#[tauri::command]
+pub async fn attachment_document_preview<R: Runtime>(
+    document_id: DocumentId,
+    attachment_id: u32,
+    app: AppHandle<R>,
+) -> Result<DocumentPreviewDto, IpcError> {
+    blocking(move || {
+        let document = state_of(&app).documents.get(document_id)?;
+        let (attachment, extracted) = extract(&document, attachment_id, MAX_PREVIEW_BYTES)?;
+        let preview = office_preview::read(&extracted.bytes, &office_preview::Limits::default())?;
+        if preview.notes.has_macros {
+            log::warn!("attachment {} of document {document_id} carries macros", attachment.id);
+        }
+        Ok(DocumentPreviewDto::from(preview))
     })
     .await
 }

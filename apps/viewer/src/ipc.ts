@@ -36,7 +36,7 @@ export interface OpenOutcome {
 
 export type Origin = { kind: "document" } | { kind: "page"; number: number };
 
-export type AttachmentKind = "pdf" | "image" | "text" | "other";
+export type AttachmentKind = "pdf" | "image" | "text" | "document" | "other";
 
 export interface Attachment {
   id: number;
@@ -69,6 +69,50 @@ export type Integrity =
   | { status: "not_declared" }
   | { status: "size_mismatch"; declared: number; actual: number }
   | { status: "checksum_mismatch" };
+
+/** A prévia de leitura de um `.docx` ou `.odt`: blocos com tipo, montados pelo Rust. */
+export interface DocumentPreview {
+  format: "docx" | "odt";
+  blocks: DocumentBlock[];
+  /** O MIME saiu da assinatura dos bytes, no Rust; `data` é base64. */
+  images: Array<{ mimeType: string; data: string }>;
+  notes: DocumentNotes;
+}
+
+export type DocumentBlock =
+  | {
+      type: "paragraph";
+      role: DocumentRole;
+      marker: string | null;
+      align: "start" | "center" | "end" | "justify";
+      inlines: DocumentInline[];
+    }
+  | { type: "table"; rows: Array<{ cells: DocumentCell[] }> };
+
+export type DocumentRole =
+  | { kind: "body" }
+  | { kind: "heading"; level: number }
+  | { kind: "list_item"; level: number };
+
+export type DocumentMark = "bold" | "italic" | "underline" | "strike";
+
+export type DocumentInline =
+  | { type: "text"; text: string; marks: DocumentMark[] }
+  | { type: "break" }
+  | { type: "image"; index: number };
+
+export interface DocumentCell {
+  colSpan: number;
+  rowSpan: number;
+  blocks: DocumentBlock[];
+}
+
+export interface DocumentNotes {
+  hasMacros: boolean;
+  skippedImages: number;
+  skippedObjects: number;
+  truncated: boolean;
+}
 
 export interface RecentEntry {
   name: string;
@@ -147,6 +191,12 @@ export function errorMessage(code: IpcErrorCode): string {
       return "O anexo é grande demais para esta operação.";
     case "attachment_undecodable":
       return "O conteúdo do anexo está corrompido ou usa uma compressão não suportada.";
+    case "unsupported_document":
+      return "O conteúdo do anexo não é um documento .docx ou .odt, apesar do nome.";
+    case "protected_document":
+      return "O documento é protegido por senha ou está num formato antigo (.doc); não há pré-visualização.";
+    case "malformed_document":
+      return "A estrutura do documento está danificada; não foi possível pré-visualizá-lo.";
     case "blocked_executable":
       return "Arquivos executáveis não são abertos pelo visualizador. Salve o arquivo e verifique-o antes de usar.";
     case "unsupported_link":
@@ -199,6 +249,11 @@ export const listAttachments = (
 
 export const attachmentBytes = (documentId: number, attachmentId: number): Promise<ArrayBuffer> =>
   call("attachment_bytes", { documentId, attachmentId });
+
+export const attachmentDocumentPreview = (
+  documentId: number,
+  attachmentId: number,
+): Promise<DocumentPreview> => call("attachment_document_preview", { documentId, attachmentId });
 
 export const verifyAttachment = (documentId: number, attachmentId: number): Promise<Integrity> =>
   call("verify_attachment", { documentId, attachmentId });

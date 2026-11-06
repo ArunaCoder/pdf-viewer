@@ -4,7 +4,9 @@
 //! O tipo declarado no PDF (`/Subtype` do stream, um MIME) e a extensão do nome são ambos
 //! do autor do PDF, e nenhum dos dois prova o conteúdo. Para **exibir**, isso basta: a
 //! prévia de imagem e de texto acontece dentro do webview, sem executar nada, e um tipo
-//! mentiroso só rende uma prévia quebrada. Para **abrir como PDF**, o app confere a
+//! mentiroso só rende uma prévia quebrada. A prévia de documento (`.docx`, `.odt`) também
+//! não confia no tipo: o leitor dela (`office_preview`) decide o formato pelo conteúdo e
+//! recusa o resto. Para **abrir como PDF**, o app confere a
 //! assinatura dos bytes ([`looks_like_pdf`]). Para **abrir com o programa padrão**, a régua
 //! é a extensão ([`is_executable`]), porque é ela — e não o MIME — que o Windows usa para
 //! escolher o programa.
@@ -20,9 +22,13 @@ pub enum FileKind {
     Image,
     /// Texto legível, exibido como texto puro.
     Text,
+    /// Um documento de texto (`.docx`, `.odt`), exibido pela prévia de leitura.
+    Document,
     /// Sem prévia: só salvar ou abrir com o programa padrão.
     Other,
 }
+
+const DOCUMENT_EXTENSIONS: &[&str] = &["docx", "odt"];
 
 const IMAGE_EXTENSIONS: &[&str] = &["png", "jpg", "jpeg", "jfif", "gif", "webp", "bmp", "ico", "avif", "svg"];
 
@@ -194,6 +200,8 @@ fn classify_mime(mime: &str) -> Option<FileKind> {
         // Não é tipo nenhum: quem decide é a extensão.
         "" | "application/octet-stream" | "application/binary" => None,
         "application/json" | "application/xml" | "application/csv" => Some(FileKind::Text),
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        | "application/vnd.oasis.opendocument.text" => Some(FileKind::Document),
         _ if essence.starts_with("image/") => Some(FileKind::Image),
         _ if essence.starts_with("text/") => Some(FileKind::Text),
         _ if essence.ends_with("+xml") || essence.ends_with("+json") => Some(FileKind::Text),
@@ -208,6 +216,8 @@ fn classify_extension(extension: &str) -> FileKind {
         FileKind::Image
     } else if TEXT_EXTENSIONS.contains(&extension) {
         FileKind::Text
+    } else if DOCUMENT_EXTENSIONS.contains(&extension) {
+        FileKind::Document
     } else {
         FileKind::Other
     }
@@ -242,6 +252,18 @@ mod tests {
         assert_eq!(classify("fatura.xml", Some("text/xml; charset=utf-8")), FileKind::Text);
         assert_eq!(classify("doc.pdf", Some("application/zip")), FileKind::Other);
         assert_eq!(classify("x.svg", Some("IMAGE/SVG+XML")), FileKind::Image);
+        assert_eq!(
+            classify(
+                "contrato",
+                Some("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            ),
+            FileKind::Document
+        );
+        assert_eq!(
+            classify("macro.docx", Some("application/vnd.ms-word.document.macroEnabled.12")),
+            FileKind::Other,
+            "o tipo com macro não ganha prévia"
+        );
     }
 
     #[test]
@@ -253,6 +275,11 @@ mod tests {
         );
         assert_eq!(classify("foto.jpeg", Some("")), FileKind::Image);
         assert_eq!(classify("arquivo.zip", None), FileKind::Other);
+        assert_eq!(classify("Contrato.DOCX", None), FileKind::Document);
+        assert_eq!(
+            classify("ata.odt", Some("application/octet-stream")),
+            FileKind::Document
+        );
         assert_eq!(classify("sem-extensao", None), FileKind::Other);
     }
 

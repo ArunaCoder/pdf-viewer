@@ -23,6 +23,7 @@ const COMMANDS: &[&str] = &[
     "open_external_link",
     "list_attachments",
     "attachment_bytes",
+    "attachment_document_preview",
     "verify_attachment",
     "open_attachment_as_document",
     "save_attachment",

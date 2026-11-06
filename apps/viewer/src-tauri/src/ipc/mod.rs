@@ -45,6 +45,7 @@ pub fn handler<R: Runtime>() -> impl Fn(tauri::ipc::Invoke<R>) -> bool + Send + 
         documents::open_external_link,
         attachments::list_attachments,
         attachments::attachment_bytes,
+        attachments::attachment_document_preview,
         attachments::verify_attachment,
         attachments::open_attachment_as_document,
         attachments::save_attachment,

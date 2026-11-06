@@ -21,6 +21,7 @@
     "allow-open-external-link",
     "allow-list-attachments",
     "allow-attachment-bytes",
+    "allow-attachment-document-preview",
     "allow-verify-attachment",
     "allow-open-attachment-as-document",
     "allow-save-attachment",

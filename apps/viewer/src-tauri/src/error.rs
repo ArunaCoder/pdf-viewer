@@ -14,6 +14,7 @@
 
 use std::io;
 
+use office_preview::PreviewError;
 use pdf_attachments::{ExtractError, OpenError};
 use serde::Serialize;
 
@@ -46,6 +47,12 @@ pub enum IpcErrorCode {
     AttachmentTooLarge,
     /// O conteúdo do anexo não pôde ser decodificado.
     AttachmentUndecodable,
+    /// O conteúdo do anexo não é um documento que a prévia lê (`.docx`, `.odt`).
+    UnsupportedDocument,
+    /// O documento anexado é cifrado com senha, ou está no formato binário antigo.
+    ProtectedDocument,
+    /// A estrutura do documento anexado está danificada.
+    MalformedDocument,
     /// O anexo é executável, e o app não o entrega ao sistema para abrir.
     BlockedExecutable,
     /// O link não é de um esquema que o app abre fora dele.
@@ -111,6 +118,18 @@ impl From<ExtractError> for IpcError {
             ExtractError::UnknownAttachment(_) => IpcErrorCode::UnknownAttachment,
             ExtractError::TooLarge { .. } => IpcErrorCode::AttachmentTooLarge,
             ExtractError::Decode(_) => IpcErrorCode::AttachmentUndecodable,
+        };
+        Self::new(code, error.to_string())
+    }
+}
+
+impl From<PreviewError> for IpcError {
+    fn from(error: PreviewError) -> Self {
+        let code = match error {
+            PreviewError::NotADocument => IpcErrorCode::UnsupportedDocument,
+            PreviewError::Encrypted => IpcErrorCode::ProtectedDocument,
+            PreviewError::TooLarge { .. } => IpcErrorCode::AttachmentTooLarge,
+            PreviewError::Archive(_) | PreviewError::Xml { .. } => IpcErrorCode::MalformedDocument,
         };
         Self::new(code, error.to_string())
     }

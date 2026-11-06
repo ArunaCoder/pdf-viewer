@@ -3,6 +3,7 @@
 // Tudo o que se decide sobre um anexo — tipo, se é executável, se confere com o que o PDF
 // declara — vem pronto do Rust. Aqui só se escolhe como mostrar.
 
+import { renderDocument } from "./document-preview";
 import { append, clear, el } from "./dom";
 import {
   attachmentMeta,
@@ -18,6 +19,7 @@ import {
   type AttachmentKind,
   type AttachmentListing,
   attachmentBytes,
+  attachmentDocumentPreview,
   type DocumentInfo,
   type Integrity,
   type IpcFailure,
@@ -37,6 +39,7 @@ const KIND_ICONS: Record<AttachmentKind, IconName> = {
   pdf: "file-pdf",
   image: "image",
   text: "file-text",
+  document: "file-text",
   other: "archive",
 };
 
@@ -409,6 +412,13 @@ class AttachmentPreview {
       el("div", { class: "drawer-loading" }, [el("span", { class: "spinner" }), "Carregando…"]),
     );
     try {
+      if (a.kind === "document") {
+        const preview = await attachmentDocumentPreview(this.documentId, a.id);
+        clear(stage);
+        stage.classList.add("document");
+        stage.append(renderDocument(preview));
+        return;
+      }
       const bytes = await attachmentBytes(this.documentId, a.id);
       clear(stage);
       if (a.kind === "image") this.showImage(stage, bytes);

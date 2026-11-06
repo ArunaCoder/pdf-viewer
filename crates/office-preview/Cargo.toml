@@ -1,0 +1,21 @@
+[package]
+name = "office-preview"
+description = "Prévia de leitura dos documentos de texto .docx e .odt, lidos como entrada hostil"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+# O contêiner ZIP do `.docx` e do `.odt`. Sem as features padrão, que trazem bzip2 e zstd
+# (ambos compilam C, que esta estação não tem), lzma, AES e datas — nenhum deles aparece num
+# documento de texto. Fica só a descompressão deflate pelo backend `zlib-rs`, em Rust puro,
+# que o `flate2` da árvore do Tauri já compila.
+zip = { version = "9.0.5", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+# O XML das partes do documento, em árvore só de leitura. Recusa DTD por padrão: sem
+# entidade declarada não há entidade externa (XXE) nem expansão em cadeia ("billion
+# laughs"), e o número de nós tem teto (`ParsingOptions::nodes_limit`).
+roxmltree = "0.21.1"
+thiserror = { workspace = true }
+
+[lints]
+workspace = true

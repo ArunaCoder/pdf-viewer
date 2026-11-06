@@ -66,6 +66,13 @@
   --danger: #fb7185;
   --warning: #fbbf24;
   --success: #34d399;
+
+  /* ── Papel: a folha da prévia de documento, clara nos dois temas, como a página do PDF ── */
+  --paper: #ffffff;
+  --paper-text: #1c1230;
+  --paper-muted: #5b4d75;
+  --paper-rule: rgb(28 18 48 / 0.18);
+  --paper-shade: rgb(28 18 48 / 0.04);
 }
 
 /* ── Tema escuro (origem) ─────────────────────────────────────────────────── */

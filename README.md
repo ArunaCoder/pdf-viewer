@@ -12,6 +12,7 @@ Visualizador de PDF para Windows (Rust + Tauri 2) que lê **e entrega** os arqui
 - **Anexos**, pelos três caminhos do formato — árvore `EmbeddedFiles`, arquivos associados `/AF` (PDF/A-3, PDF 2.0) e anotações de clipe nas páginas:
   - lista com tipo, tamanho, datas, descrição, página de origem e relação PDF/A-3;
   - **pré-visualização** de imagem e texto; anexo PDF abre **em nova aba** (e os anexos dele também);
+  - **pré-visualização de leitura** de `.docx` e `.odt` — títulos, listas, tabelas, negrito/itálico e imagens —, com o formato decidido pelo conteúdo, macros só avisadas e nada externo buscado;
   - **salvar** um ou **todos** de uma vez, sem nunca sobrescrever arquivo existente;
   - **abrir no app padrão**, recusado para executáveis;
   - **conferência de integridade** contra o tamanho e o MD5 declarados no PDF;
@@ -29,6 +30,7 @@ crates/pdf-attachments/   núcleo puro (sem Tauri, sem disco): lê, classifica e
   src/                    índice, travessia, datas PDF, nome seguro, tipo de arquivo
   tests/                  PDFs montados em memória para cada caso
   examples/sample_pdf.rs  gera um PDF de amostra com anexos de todos os tipos
+crates/office-preview/    núcleo puro: lê .docx e .odt como entrada hostil e devolve blocos com tipo
 apps/viewer/              o app
   src/                    webview TypeScript (pdf.js), design system em styles/
   src-tauri/              casca Rust: comandos IPC, documentos, recentes, escrita segura
